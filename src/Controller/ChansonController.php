@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Chanson;
 use App\Entity\Genre;
+use App\Form\ChansonType;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,6 +32,7 @@ class ChansonController extends AbstractController
         ]);
     }
 
+    // route qui mène aux détails d'une chanson
     #[Route('/chanson/detail/{id}', name: 'app_chanson_detail')]
     public function detail(Chanson $chanson): Response
     {
@@ -42,13 +44,13 @@ class ChansonController extends AbstractController
 
 
 
-    //Création d'une chanson via une route (sans formulaire)
-    #[Route('/chanson/ajouter', name: 'app_article_ajouter')]
+    //Création d'une chanson via une route (formulaire)
+    #[Route('/chanson/ajouter', name: 'app_chanson_ajouter')]
     public function ajouter(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $chanson = new chanson();
+        $chanson = new Chanson();
 
-        //$chanson->setDateAjout();
+        $chanson->setDateAjout(new DateTime());
 
         $form = $this->createForm(ChansonType::class, $chanson);
 
@@ -67,6 +69,39 @@ class ChansonController extends AbstractController
         return $this->render('chanson/ajouter.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    //route qui me permet de modifier une chanson via son id
+    #[Route('/chanson/modifier/{id}', name: 'app_chanson_modifier')]
+    public function modifier(Chanson $chanson, EntityManagerInterface $entityManager, Request $request): Response
+    {
+
+        $form = $this->createForm(ChansonType::class, $chanson);
+
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $chanson = $form->getData();
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_chanson');
+        }
+
+        return $this->render('chanson/modifier.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/chanson/supprimer/{id}', name: 'app_chanson_supprimer')]
+    public function supprimer(Chanson $chanson, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($chanson);
+        $entityManager->flush();
+        
+        return $this->redirectToRoute('app_chanson');
     }
 
 }
