@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ChansonController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper row">
+
+<a class="btn btn-primary" href="#">Ajouter une chanson</a>
+
+    {% for chanson in chansons %}
+    <div class="card col-sm-6 m-2  mb-sm-0" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{chanson.titre}}</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{chanson.auteur}}</h6>
+            <p class="card-text">{{chanson.paroles}}</p>
+            <a class="btn btn-secondary" href="{{ path('app_chanson_detail', {'id': chanson.id} )}}" class="card-link">Détail</a>
+            <a class="btn btn-primary" href="#" class="card-link">Modifier</a>
+            <a class="btn btn-danger" href="#" class="card-link">Supprimer</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
